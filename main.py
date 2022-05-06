@@ -3,7 +3,7 @@ import networkx as nx
 import random
 import pandas as pd
 
-
+print("shahar is the queen")
 def simulate_edge_creation(G, prob):
     new_G = nx.create_empty_copy(G, with_data=True)
     nodes1 = list(G.nodes)
