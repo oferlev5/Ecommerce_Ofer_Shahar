@@ -94,14 +94,17 @@ def create_grade(G):
         artists.append(artist_grade(G, node, L))
         deg.append(G.degree[node])
 
-    max_deg = max(deg)
     max_artist = max(artists)
+    max_deg = max(deg)
     min_artists = -999
 
     for node in nodes1:
         a = artist_grade(G, node, L)
         if a >= 0:
-            a = a / max_artist
+            if max_artist != 0:
+                a = a / max_artist
+            else:
+                a = 0
         else:
             a = a / min_artists
         c = nx.closeness_centrality(G, node)
@@ -116,11 +119,11 @@ def get_top_influencers(G):
     create_grade(G)
     dic = nx.get_node_attributes(G, 'grade')
     sorted_dic = sorted(dic, key=dic.get, reverse=True)
-    return sorted_dic[:5]
+    # return sorted_dic[:5]
+    return sorted_dic[900:905]
 
 
 def simulate_graph(G, prob):
-    create_grade(G)
     for i in range(5):
         simulate_edge_creation(G, prob)  ## from t= 0 to t=1
         infection(G)
@@ -179,11 +182,11 @@ for i in range(3, 1000):
     if prob[i] == 0.0:
         prob[i] = x
 
-artist_list = [70,150,989,16326]
+artist_list = [70, 150, 989, 16326]
 final_list = []
 for artist in artist_list:
     S0 = [G0.subgraph(c).copy() for c in nx.connected_components(G0)]
     inf_list, acc = FINISH_HIM(S0[0], artist, prob)
-    final_list.append((inf_list, acc))
+    final_list.append((artist, inf_list, acc))
 
 print(final_list)
