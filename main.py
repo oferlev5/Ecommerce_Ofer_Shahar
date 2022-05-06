@@ -3,7 +3,7 @@ import networkx as nx
 import random
 import pandas as pd
 
-print("shahar is the queen")
+
 def simulate_edge_creation(G, prob):
     new_G = nx.create_empty_copy(G, with_data=True)
     nodes1 = list(G.nodes)
@@ -46,7 +46,6 @@ def infection(G):
         for node in infected_list:
             G.nodes[node]['bought'] = 1
 
-## יש בעיה כי חלק מהצמתים לא מכירים את הפרמטר H
 
 def FINISH_HIM(G, artist_num, prob):
     spot = pd.read_csv('spotifly.csv', index_col=False)
@@ -64,7 +63,7 @@ def FINISH_HIM(G, artist_num, prob):
     influencers_list = get_top_influencers(G)
     infect_nodes(G, influencers_list)
     acc = simulate_graph(G, prob)
-    return acc
+    return influencers_list, acc
 
 
 def infect_nodes(G, list_of_nodes):
@@ -180,5 +179,11 @@ for i in range(3, 1000):
     if prob[i] == 0.0:
         prob[i] = x
 
-c = FINISH_HIM(S0[0],150,prob)
-print(c)
+artist_list = [70,150,989,16326]
+final_list = []
+for artist in artist_list:
+    S0 = [G0.subgraph(c).copy() for c in nx.connected_components(G0)]
+    inf_list, acc = FINISH_HIM(S0[0], artist, prob)
+    final_list.append((inf_list, acc))
+
+print(final_list)
