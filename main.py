@@ -47,7 +47,7 @@ def infection(G):
             G.nodes[node]['bought'] = 1
 
 
-def FINISH_HIM(G, artist_num, prob):
+def Choose_Influencers(G, artist_num, prob):
     spot = pd.read_csv('spotifly.csv', index_col=False)
     new_spot = spot[spot[' artistID'] == artist_num]
     new_spot = new_spot.reset_index(drop=True)
@@ -110,8 +110,6 @@ def create_grade(G):
         c = nx.closeness_centrality(G, node)
         d = G.degree[node] / max_deg
         x = (0.2 * a + 0.4 * c + 0.4 * d)
-        #         x = (a +c+d)/3
-
         G.nodes[node]['grade'] = x
 
 
@@ -119,13 +117,12 @@ def get_top_influencers(G):
     create_grade(G)
     dic = nx.get_node_attributes(G, 'grade')
     sorted_dic = sorted(dic, key=dic.get, reverse=True)
-    # return sorted_dic[:5]
-    return sorted_dic[900:905]
+    return sorted_dic[:5]
 
 
 def simulate_graph(G, prob):
     for i in range(5):
-        simulate_edge_creation(G, prob)  ## from t= 0 to t=1
+        simulate_edge_creation(G, prob)
         infection(G)
     nodes1 = list(G.nodes)
     count = 0
@@ -143,6 +140,8 @@ G0 = nx.from_pandas_edgelist(df0, source="userID", target="friendID")
 
 S = [G.subgraph(c).copy() for c in nx.connected_components(G)]
 S0 = [G0.subgraph(c).copy() for c in nx.connected_components(G0)]
+
+# computing the probability for edge creation
 
 nodes1 = list(S[0].nodes)
 list_of_prob = []
@@ -164,7 +163,7 @@ for i in range(len(nodes1)):
 numerator = [0] * 1000
 L = list(S0[0].edges())
 
-for i in range(1, 1000):  ## possible to use 50 instead of 1000
+for i in range(1, 1000):
     for edge in every_group[i]:
         if type(edge) != int:
             temp = (edge[0], edge[1])
@@ -182,11 +181,12 @@ for i in range(3, 1000):
     if prob[i] == 0.0:
         prob[i] = x
 
+
 artist_list = [70, 150, 989, 16326]
 final_list = []
 for artist in artist_list:
     S0 = [G0.subgraph(c).copy() for c in nx.connected_components(G0)]
-    inf_list, acc = FINISH_HIM(S0[0], artist, prob)
+    inf_list, acc = Choose_Influencers(S0[0], artist, prob)
     final_list.append((artist, inf_list, acc))
 
 print(final_list)
